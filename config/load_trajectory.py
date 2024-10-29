@@ -22,7 +22,7 @@ parser.add_argument('-e', '--exec_time', type=float, help='a')
 args = parser.parse_args()
 # 
 uav_name = os.getenv("UAV_NAME")
-uav_name = "uav1"
+uav_name = "uav2"
 
 class Goto:
 
@@ -61,8 +61,8 @@ class Goto:
         along_x = False
 
         if args.selector == "line":
-            center_point = [4.0, 0.0, 1.0, 0.0]
-            dist = 15.0
+            center_point = [4.0, 0.0, 5.0, 0.0]
+            dist = 12.0
             point1 = Reference()
             point2 = Reference()
             
@@ -74,87 +74,60 @@ class Goto:
             point2.position.y = center_point[1]
             point2.position.z = center_point[2] 
             point2.heading = center_point[3]
-            if along_x:
-                point1.position.x = center_point[0] - dist/2
-                point2.position.x = center_point[0] + dist/2
-            else: 
-                point1.position.y = center_point[0] - dist/2
-                point2.position.y = center_point[0] + dist/2
+
+            point1.position.y = center_point[1] - dist/2
+            point2.position.y = center_point[1] + dist/2
 
             path_msg.path.points.append(point1)
             path_msg.path.points.append(point2)
             path_msg.path.points.append(point1)
 
         elif args.selector == "eight":
-            center_point = [4.0, 0.0, 4,0, 0.0]
+            center_point = [4.0, 0.0, 5,0, 0.0]
             radius = 2.5
 
             angle = -math.pi / 2.0
             data_points = 6
             angle_discretization =(2*math.pi) / float(data_points)  
             first_pt = Reference()
-            if along_x:
-                for i in range(data_points):
-                    point_circle = Reference()
-                    point_circle.position.x = center_point[0] + radius * math.sin(angle) + radius
-                    point_circle.position.y = center_point[1]
-                    point_circle.position.z = center_point[2] + radius * math.cos(angle)
-                    point_circle.heading = center_point[3]
-                    angle = angle + angle_discretization
-                    path_msg.path.points.append(point_circle)
-                    if i == 0:
-                        first_pt = Reference()
-                        first_pt.position.x = point_circle.position.x
-                        first_pt.position.y = point_circle.position.y
-                        first_pt.position.z = point_circle.position.z
-                        first_pt.heading = point_circle.heading
-                angle_discretization =(2*math.pi) / float(data_points) * -1.0
-                angle = math.pi / 2.0
-                for i in range(data_points):
-                    point_circle = Reference()
-                    point_circle.position.x = center_point[0] + radius * math.sin(angle) - radius
-                    point_circle.position.y = center_point[1]
-                    point_circle.position.z = center_point[2] + radius * math.cos(angle)
-                    point_circle.heading = center_point[3]
-                    path_msg.path.points.append(point_circle)
-                    angle = angle + angle_discretization
-            else:
-                for i in range(data_points):
-                    point_circle = Reference()
-                    point_circle.position.x = center_point[0]
-                    point_circle.position.y = center_point[1] + radius * math.sin(angle) + radius
-                    point_circle.position.z = center_point[2] + radius * math.cos(angle)
-                    point_circle.heading = center_point[3]
-                    angle = angle + angle_discretization
-                    path_msg.path.points.append(point_circle)
-                    if i == 0:
-                        first_pt = Reference()
-                        first_pt.position.x = point_circle.position.x
-                        first_pt.position.y = point_circle.position.y
-                        first_pt.position.z = point_circle.position.z
-                        first_pt.heading = point_circle.heading
-                angle_discretization =(2*math.pi) / float(data_points) * -1.0
-                angle = math.pi / 2.0
-                for i in range(data_points):
-                    point_circle = Reference()
-                    point_circle.position.x = center_point[0]
-                    point_circle.position.y = center_point[1] + radius * math.sin(angle) - radius
-                    point_circle.position.z = center_point[2] + radius * math.cos(angle)
-                    point_circle.heading = center_point[3]
-                    angle = angle + angle_discretization
-                    path_msg.path.points.append(point_circle)
+            for i in range(data_points):
+                point_circle = Reference()
+                point_circle.position.x = center_point[0]
+                point_circle.position.y = center_point[1] + radius * math.sin(angle) + radius
+                point_circle.position.z = center_point[2] + radius * math.cos(angle)
+                point_circle.heading = center_point[3]
+                angle = angle + angle_discretization
+                path_msg.path.points.append(point_circle)
+                if i == 0:
+                    first_pt = Reference()
+                    first_pt.position.x = point_circle.position.x
+                    first_pt.position.y = point_circle.position.y
+                    first_pt.position.z = point_circle.position.z
+                    first_pt.heading = point_circle.heading
+            angle_discretization =(2*math.pi) / float(data_points) * -1.0
+            angle = math.pi / 2.0
+            for i in range(data_points):
+                point_circle = Reference()
+                point_circle.position.x = center_point[0]
+                point_circle.position.y = center_point[1] + radius * math.sin(angle) - radius
+                point_circle.position.z = center_point[2] + radius * math.cos(angle)
+                point_circle.heading = center_point[3]
+                angle = angle + angle_discretization
+                path_msg.path.points.append(point_circle)
                 
             path_msg.path.points.append(first_pt)
 
         elif args.selector == "star":
 
             center_point = [4.0, 0.0, 5.0, 0.0] 
-
-            offset_p1 = 1.0
-            offset_p2p5_h = 2.0
-            offset_p2p5_v = 2.0
-            offset_p3p4_h = 2.5
-            offset_p3p4_v = 0.5
+            
+            # multiplier_factor = 2.0
+            multiplier_factor = 1.
+            offset_p1 = 1.5 * multiplier_factor
+            offset_p2p5_h = 2.0 * multiplier_factor
+            offset_p2p5_v = 2.0 * multiplier_factor
+            offset_p3p4_h = 2.5 * multiplier_factor
+            offset_p3p4_v = 0.5 * multiplier_factor
 
             point1 = Reference()
             point2 = Reference()
@@ -162,56 +135,30 @@ class Goto:
             point4 = Reference()
             point5 = Reference()
             
-            if along_x:
-                point1.position.x = center_point[0]  
-                point1.position.y = center_point[1]  
-                point1.position.z = center_point[2] + offset_p1
-                point1.heading = center_point[3]
-                
-                point2.position.x = center_point[0] + offset_p2p5_h
-                point2.position.y = center_point[1]  
-                point2.position.z = center_point[2] - offset_p2p5_v
-                point2.heading = center_point[3]
-        
-                point3.position.x = center_point[0] - offset_p3p4_h
-                point3.position.y = center_point[1]  
-                point3.position.z = center_point[2] + offset_p3p4_v
-                point3.heading = center_point[3]
-
-                point4.position.x = center_point[0] + offset_p3p4_h
-                point4.position.y = center_point[1]  
-                point4.position.z = center_point[2] + offset_p3p4_v
-                point4.heading = center_point[3]
-
-                point5.position.x = center_point[0] - offset_p2p5_h
-                point5.position.y = center_point[1]  
-                point5.position.z = center_point[2] - offset_p2p5_v
-                point5.heading = center_point[3]
-            else:
-                point1.position.x = center_point[0]  
-                point1.position.y = center_point[1]  
-                point1.position.z = center_point[2] + offset_p1
-                point1.heading = center_point[3]
-                
-                point2.position.x = center_point[0] 
-                point2.position.y = center_point[1] + offset_p2p5_h
-                point2.position.z = center_point[2] - offset_p2p5_v
-                point2.heading = center_point[3]
-        
-                point3.position.x = center_point[0] 
-                point3.position.y = center_point[1] - offset_p3p4_h
-                point3.position.z = center_point[2] + offset_p3p4_v
-                point3.heading = center_point[3]
-
-                point4.position.x = center_point[0] 
-                point4.position.y = center_point[1] + offset_p3p4_h
-                point4.position.z = center_point[2] + offset_p3p4_v
-                point4.heading = center_point[3]
-
-                point5.position.x = center_point[0] 
-                point5.position.y = center_point[1] - offset_p2p5_h 
-                point5.position.z = center_point[2] - offset_p2p5_v
-                point5.heading = center_point[3]
+            point1.position.x = center_point[0]  
+            point1.position.y = center_point[1]  
+            point1.position.z = center_point[2] + offset_p1
+            point1.heading = center_point[3]
+            
+            point2.position.x = center_point[0] 
+            point2.position.y = center_point[1] + offset_p2p5_h
+            point2.position.z = center_point[2] - offset_p2p5_v
+            point2.heading = center_point[3]
+                    
+            point3.position.x = center_point[0] 
+            point3.position.y = center_point[1] - offset_p3p4_h
+            point3.position.z = center_point[2] + offset_p3p4_v
+            point3.heading = center_point[3]
+            
+            point4.position.x = center_point[0] 
+            point4.position.y = center_point[1] + offset_p3p4_h
+            point4.position.z = center_point[2] + offset_p3p4_v
+            point4.heading = center_point[3]
+            
+            point5.position.x = center_point[0] 
+            point5.position.y = center_point[1] - offset_p2p5_h 
+            point5.position.z = center_point[2] - offset_p2p5_v
+            point5.heading = center_point[3]
             
             path_msg.path.points.append(point1)
             path_msg.path.points.append(point2)

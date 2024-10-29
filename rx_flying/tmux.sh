@@ -45,13 +45,13 @@ input=(
 '
   'Status' 'waitForHw; roslaunch mrs_uav_status status.launch
 '
-  'Core' 'waitForTime; roslaunch mrs_uav_core core.launch platform_config:=`rospack find mrs_uav_deployment`/config/mrs_uav_system/$UAV_TYPE.yaml world_config:=`rospack find mrs_uav_deployment`/config/worlds/world_$WORLD_NAME.yaml custom_config:=./config/custom_config.yaml network_config:=./config/network_config.yaml
+  'Core' 'waitForTime; roslaunch mrs_uav_core core.launch platform_config:=`rospack find mrs_uav_deployment`/config/mrs_uav_system/$UAV_TYPE.yaml world_config:=.config/island_world.yaml custom_config:=./config/custom_config.yaml network_config:=./config/network_config.yaml
 '
   'AutoStart' 'waitForHw; roslaunch mrs_uav_autostart automatic_start.launch
 '
   'UVDAR' 'waitForHw; roslaunch uvdar_core rw_three_sided_without_pose.launch
 '
-  'goto' 'history -s rosservice call /$UAV_NAME/control_manager/goto \"goal: \[0.0, 0.0, 4.0, 0.0\]\"
+  'goto' 'history -s rosservice call /$UAV_NAME/control_manager/goto \"goal: \[0.0, 0.0, 5.0, 1.35\]\"
 '
 # do NOT modify the command list below
   'EstimDiag' 'waitForHw; rostopic echo /'"$uav_name"'/estimation_manager/diagnostics
