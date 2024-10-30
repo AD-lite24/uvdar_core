@@ -19,7 +19,7 @@ MAIN_DIR=~/"bag_files"
 
 # the project name
 # * is used to define folder name in ~/$MAIN_DIR
-PROJECT_NAME=just_flying
+PROJECT_NAME=tim_tx_agile
 
 # the name of the TMUX session
 # * can be used for attaching as 'tmux a -t <session name>'
@@ -51,10 +51,10 @@ input=(
 '
   'Trajectory' 'waitForHw; history -s python3 ~/load_trajectory.py -s line -e 10 --loop
 '
-  'Start/Stop' 'history -s /'"$uav_name"'/control_manager/start_trajectory_tracking; history -s /'"$uav_name"'/control_manager/stop_trajectory_tracking
+  'Start/Stop' 'history -s rosservice call /'"$UAV_NAME"'/control_manager/start_trajectory_tracking; history -s rosservice call /'"$UAV_NAME"'/control_manager/stop_trajectory_tracking
 '
 # do NOT modify the command list below
-  'EstimDiag' 'waitForHw; rostopic echo /'"$uav_name"'/estimation_manager/diagnostics
+  'EstimDiag' 'waitForHw; rostopic echo /'"$UAV_NAME"'/estimation_manager/diagnostics
 '
   'kernel_log' 'tail -f /var/log/kern.log -n 100
 '
