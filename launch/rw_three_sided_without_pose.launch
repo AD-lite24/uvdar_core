@@ -76,7 +76,7 @@
   <!-- <arg name="gui" default="true"/> -->
   <arg name="gui" default="false"/>
   <arg name="publish_visualization" default="true"/>
-  <arg name="visualization_rate" default="2"/>
+  <arg name="visualization_rate" default="4"/>
 
   <arg name="publish" default="true"/>
   <arg name="useOdom" default="false"/>
