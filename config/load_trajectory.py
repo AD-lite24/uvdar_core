@@ -22,7 +22,6 @@ parser.add_argument('-e', '--exec_time', type=float, help='a')
 args = parser.parse_args()
 # 
 uav_name = os.getenv("UAV_NAME")
-uav_name = "uav2"
 
 class Goto:
 
