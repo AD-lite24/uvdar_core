@@ -49,7 +49,7 @@ input=(
 '
   'AutoStart' 'waitForHw; roslaunch mrs_uav_autostart automatic_start.launch
 '
-  'Trajectory' 'waitForHw; history -s python3 ~/load_trajectory.py -s line -e 10 --loop
+  'Trajectory' 'waitForOffboard; history -s python3 ~/load_trajectory.py -s line -e 10 --loop
 '
   'Start/Stop' 'history -s rosservice call /'"$UAV_NAME"'/control_manager/start_trajectory_tracking; history -s rosservice call /'"$UAV_NAME"'/control_manager/stop_trajectory_tracking
 '
