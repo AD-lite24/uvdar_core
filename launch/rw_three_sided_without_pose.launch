@@ -43,7 +43,7 @@
   <arg name="blink_process_rate" default="10"/>
   
   <!--AMI values-->
-  <arg name="pub_tracking_stats" default="false"/>
+  <arg name="pub_tracking_stats" default="true"/>
   <arg name="draw_predict_window_sec" default="0.0"/>
   <arg name="max_px_shift_y" default="3"/>
   <arg name="max_px_shift_x" default="3"/>
