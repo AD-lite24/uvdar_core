@@ -19,7 +19,7 @@ MAIN_DIR=~/"bag_files"
 
 # the project name
 # * is used to define folder name in ~/$MAIN_DIR
-PROJECT_NAME=just_flying
+PROJECT_NAME=tim_rx_agile
 
 # the name of the TMUX session
 # * can be used for attaching as 'tmux a -t <session name>'
@@ -54,7 +54,7 @@ input=(
   'goto' 'history -s rosservice call /$UAV_NAME/control_manager/goto \"goal: \[0.0, 0.0, 5.0, 1.35\]\"
 '
 # do NOT modify the command list below
-  'EstimDiag' 'waitForHw; rostopic echo /'"$uav_name"'/estimation_manager/diagnostics
+  'EstimDiag' 'waitForHw; rostopic echo /'"$UAV_NAME"'/estimation_manager/diagnostics
 '
   'kernel_log' 'tail -f /var/log/kern.log -n 100
 '
