@@ -5,7 +5,7 @@ mrs_uav_managers:
     # loaded state estimator plugins
     # available in mrs_uav_state_estimators: gps_garmin, gps_baro, rtk, aloam, ground_truth, dummy
     state_estimators: [
-      "gps_baro",
+    #  "gps_baro",
       "gps_garmin",
     # "rtk",
     # "aloam",
@@ -13,7 +13,7 @@ mrs_uav_managers:
     # "dummy"
     ]
 
-    initial_state_estimator: "gps_baro" # will be used as the first state estimator
+    initial_state_estimator: "gps_garmin" # will be used as the first state estimator
     agl_height_estimator: "garmin_agl" # only slightly filtered height for checking min height (not used in control feedback)
 
   constraint_manager:
@@ -97,10 +97,10 @@ mrs_uav_managers:
     ]
 
     allowed_constraints:
-        gps_baro: ["slow", "medium", "fast", "faster", "fastest"]
+        gps_garmin: ["slow", "medium", "fast", "faster", "fastest"]
 
     default_constraints:
-      gps_baro: "fast"
+      gps_garmin: "fast"
 
 mrs_uav_trackers:
   mpc_tracker:
