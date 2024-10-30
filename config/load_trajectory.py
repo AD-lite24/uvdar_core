@@ -121,7 +121,7 @@ class Goto:
             center_point = [4.0, 0.0, 5.0, 0.0] 
             
             # multiplier_factor = 2.0
-            multiplier_factor = 1.
+            multiplier_factor = 1.0
             offset_p1 = 1.5 * multiplier_factor
             offset_p2p5_h = 2.0 * multiplier_factor
             offset_p2p5_v = 2.0 * multiplier_factor
