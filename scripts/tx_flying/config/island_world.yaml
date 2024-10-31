@@ -2,8 +2,9 @@ world_origin:
 
   units: "LATLON" # {"UTM, "LATLON"}
 
-  origin_x: 47.397743
-  origin_y: 8.545594
+  origin_x: 50.111714
+  origin_y: 14.418472
+ 
 
 safety_area:
 
@@ -12,17 +13,17 @@ safety_area:
   horizontal:
 
     # the frame of reference in which the points are expressed
-    frame_name: "world_origin"
+    frame_name: "latlon_origin"
 
     # polygon
     #
     # x, y [m] for any frame_name except latlon_origin
     # x = latitude, y = longitude [deg]  for frame_name=="latlon_origin"
     points: [
-      -50, -50,
-      50,  -50,
-      50,  50,
-      -50, 50,
+      50.111594, 14.418102,
+      50.112027, 14.417896,
+      50.112190, 14.418914,
+      50.111760, 14.419093
     ]
 
   vertical:
