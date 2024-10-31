@@ -167,9 +167,6 @@
       <remap from="~ami_all_seq_info_back" to="/$(arg uav_name)/uvdar/ami_all_seq_info_back_camp"/>
 
     </node>
-    
-
-
   </group>
 
 
