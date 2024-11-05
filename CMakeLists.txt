@@ -432,6 +432,33 @@ target_link_libraries(uwb_uvdar_fuser_node
   UvdarCore_OCamCalib
   )
 
+## | -------------------- Raspi UVDAR blinker node ------------------- |
+
+EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+
+if (${ARCHITECTURE} MATCHES "arm")
+  set(EXECUTABLES
+    "${EXECUTABLES} raspi_uvdar_blinker_node"
+    )
+
+  find_package(WiringPi REQUIRED)
+
+
+  add_executable(raspi_uvdar_blinker_node
+    src/raspi_blinker.cpp
+    )
+
+  add_dependencies(raspi_uvdar_blinker_node
+    ${${PROJECT_NAME}_EXPORTED_TARGETS}
+    ${catkin_EXPORTED_TARGETS}
+    )
+
+  target_link_libraries(raspi_uvdar_blinker_node
+    ${catkin_LIBRARIES}
+    ${WiringPi_LIBRARIES}
+    )
+endif()
+
 ## | ----------------- uvdar bluefox emulator ----------------- |
 
 add_library(UvdarCore_UVDARBluefoxEmulator

@@ -79,7 +79,7 @@ namespace uvdar {
 
 
   /**
-   * @brief A processing lass for filtering measurements from UVDAR-based relative UAV pose estimator. This uses a vector of Kalman filter states for tracking multiple targets either if they have known identity or if they are anonymous.
+   * @brief A processing class for filtering measurements from UVDAR-based relative UAV pose estimator. This uses a vector of Kalman filter states for tracking multiple targets either if they have known identity or if they are anonymous.
    */
   class UWB_UVDAR_Fuser {
 

@@ -135,14 +135,13 @@
 
   <group ns="$(arg uav_name)">
   
-    <!-- <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen" launch-prefix="debug_roslaunch"> -->
-    <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen">
+    <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen" launch-prefix="debug_roslaunch">
+    <!-- <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen"> -->
       <param name="num_worker_threads" value="8" />
     </node>
 
 
-    <!-- <node pkg="nodelet" type="nodelet" name="uvdar_camera" args="$(arg nodelet) libcamera_ros/LibcameraRos $(arg nodelet_manager)" launch-prefix="$(arg launch_prefix_debug)" output="screen"> -->
-    <node pkg="nodelet" type="nodelet" name="uvdar_camera" args="$(arg nodelet) libcamera_ros/LibcameraRos $(arg nodelet_manager)" output="screen">
+    <node pkg="nodelet" type="nodelet" name="uvdar_camera" args="$(arg nodelet) libcamera_ros_driver/LibcameraRosDriver $(arg nodelet_manager)" output="screen">
 
       <!-- Load the default param files -->
       <rosparam command="load" file="$(find uvdar_core)/config/camera_config/raspi_cam_config.yaml" />
@@ -166,6 +165,7 @@
       <remap from="~camera_info" to="~camera_info" />
 
     </node>
+
 
     <node name="uv_detect" pkg="nodelet" type="nodelet" args="$(arg nodelet) uvdar/UVDARDetector $(arg nodelet_manager)" output="screen" respawn="true"> 
     <!-- <node name="uv_detect" pkg="nodelet" type="nodelet" args="$(arg nodelet) uvdar/UVDARDetector $(arg nodelet_manager)" output="screen" respawn="true" launch-prefix="debug_roslaunch"> --> 
