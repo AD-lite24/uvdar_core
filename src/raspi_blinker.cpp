@@ -1,5 +1,10 @@
 #include <ros/ros.h>
-#include <WiringPi.h>
+
+#include <mrs_msgs/Float64Srv.h>
+
+extern "C" {
+#include <wiringPi.h>
+}
 
 #define BLINK_GPIO_PIN 25
 #define INIT_BITRATE 2
@@ -23,7 +28,7 @@ namespace uvdar {
       bool initialized_ = false;
       
       std::mutex sequence_mutex;
-      std::vector<bool> _sequence_
+      std::vector<bool> _sequence_;
       int curr_index_ = -1;
       
       ros::ServiceServer serv_frequency;
@@ -69,12 +74,12 @@ namespace uvdar {
           curr_index_ = 0;
         }
 
-        digitalWrite(BLINK_GPIO_PIN, sequence[curr_index_]?HIGH:LOW);
+        digitalWrite(BLINK_GPIO_PIN, _sequence_[curr_index_]?HIGH:LOW);
       }
       //}
       
       bool callbackSetFrequency(mrs_msgs::Float64Srv::Request &req, mrs_msgs::Float64Srv::Response &res){
-        if (!initialized){
+        if (!initialized_){
           ROS_ERROR("[Raspi_UVDAR_Blinker]: Blinker is NOT initialized!");
           res.success = false;
           res.message = "Blinker is NOT initialized!";
@@ -84,7 +89,7 @@ namespace uvdar {
 
         unsigned short int_frequency = (unsigned short)(req.value); // Hz
 
-        timer.setPeriod(1.0/int_frequency);
+        timer.setPeriod(ros::Duration(1.0/int_frequency));
 
         res.message = std::string("Setting the frequency to "+std::to_string((int)(int_frequency))+" Hz").c_str();
         res.success = true;
@@ -94,9 +99,8 @@ namespace uvdar {
 
         return true;
       }
-  }
+  };
 }
-
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "raspi_UVDAR_blinker");

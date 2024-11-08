@@ -436,12 +436,17 @@ target_link_libraries(uwb_uvdar_fuser_node
 
 EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
 
-if (${ARCHITECTURE} MATCHES "arm")
+# message(${ARCHITECTURE})
+if (${ARCHITECTURE} MATCHES "aarch64")
   set(EXECUTABLES
-    "${EXECUTABLES} raspi_uvdar_blinker_node"
+    ${EXECUTABLES}
+    raspi_uvdar_blinker_node
     )
 
-  find_package(WiringPi REQUIRED)
+  # message("Executables:")
+  # message(${EXECUTABLES})
+
+  find_library(WiringPi_LIB wiringPi REQUIRED)
 
 
   add_executable(raspi_uvdar_blinker_node
@@ -455,7 +460,7 @@ if (${ARCHITECTURE} MATCHES "arm")
 
   target_link_libraries(raspi_uvdar_blinker_node
     ${catkin_LIBRARIES}
-    ${WiringPi_LIBRARIES}
+    ${WiringPi_LIB}
     )
 endif()
 
