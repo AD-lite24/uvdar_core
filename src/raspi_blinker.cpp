@@ -8,6 +8,7 @@
 #include <uvdar_core/SetInts.h>
 
 #include <fstream>
+#include <signal.h>
 
 extern "C" {
 #include <wiringPi.h>
@@ -86,7 +87,7 @@ namespace uvdar {
 
         wiringPiSetupGpio();
         pinMode(BLINK_GPIO_PIN, OUTPUT);
-        ROS_INFO_STREAM("[Raspi_UVDAR_blinker]: GPIO " << BLINK_GPIO_PIN << " has been set as OUTPUT.");
+        ROS_INFO_STREAM("[Raspi_UVDAR_blinker]: GPIO pin " << BLINK_GPIO_PIN << " has been set as OUTPUT.");
 
         serv_set_active = nh.advertiseService("set_active", &Raspi_UVDAR_Blinker::callbackSetActive, this);
 
@@ -301,13 +302,35 @@ namespace uvdar {
         }
         return true;
       }
+
+      void stopAndClear(){
+        ROS_INFO("[Raspi_UVDAR_Blinker]: Stopping timer...");
+        timer.stop();
+        ROS_INFO("[Raspi_UVDAR_Blinker]: Clearing LED GPIO pin %d...",BLINK_GPIO_PIN);
+        digitalWrite(BLINK_GPIO_PIN, LOW);
+        ROS_INFO("[Raspi_UVDAR_Blinker]: Done.");
+        return;
+      }
+
   };
+}
+
+std::unique_ptr<uvdar::Raspi_UVDAR_Blinker> rub;
+
+//cleanup - if I stop the program it should turn the LEDs off
+void sigintHandler([[maybe_unused]] int s) 
+{
+  rub->stopAndClear();
+  ros::shutdown();
+  return;
 }
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "raspi_UVDAR_blinker");
   ros::NodeHandle nh("~");
-  uvdar::Raspi_UVDAR_Blinker        rub(nh);
+  rub = std::make_unique<uvdar::Raspi_UVDAR_Blinker>(nh);
+
+  signal(SIGINT, sigintHandler);
 
   ROS_INFO("[Raspi_UVDAR_blinker]: UWB-UVDAR fuser node initiated");
 
