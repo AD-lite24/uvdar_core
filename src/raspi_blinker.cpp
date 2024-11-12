@@ -7,7 +7,7 @@ extern "C" {
 }
 
 #define BLINK_GPIO_PIN 25
-#define INIT_BITRATE 2
+#define INIT_BITRATE 60
 
 namespace uvdar {
 
@@ -30,6 +30,7 @@ namespace uvdar {
       std::mutex sequence_mutex;
       std::vector<bool> _sequence_;
       int curr_index_ = -1;
+      int prev_index_ = -2;
       
       ros::ServiceServer serv_frequency;
 
@@ -47,7 +48,8 @@ namespace uvdar {
         pinMode(BLINK_GPIO_PIN, OUTPUT);
         ROS_INFO_STREAM("[Raspi_UVDAR_blinker]: GPIO " << BLINK_GPIO_PIN << " has been set as OUTPUT.");
 
-        _sequence_ = {true, false, false, true, true, false}; //TODO
+        /* _sequence_ = {true, false, true, true, false, true, true, true, false}; //TODO */
+        _sequence_ = {0,0,1,0,0,1,0,0,1,0,1,1,0,1,1,0,1,1};
 
         serv_frequency = nh.advertiseService("set_frequency", &Raspi_UVDAR_Blinker::callbackSetFrequency, this);
 
@@ -74,7 +76,11 @@ namespace uvdar {
           curr_index_ = 0;
         }
 
-        digitalWrite(BLINK_GPIO_PIN, _sequence_[curr_index_]?HIGH:LOW);
+        if (_sequence_[curr_index_] != _sequence_[prev_index_]){
+            digitalWrite(BLINK_GPIO_PIN, _sequence_[curr_index_]?HIGH:LOW);
+        }
+        
+        prev_index_ = curr_index_;
       }
       //}
       
