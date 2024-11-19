@@ -157,6 +157,11 @@ namespace uvdar {
         }
 
         active_ = req.data;
+        
+        res.message = std::string("Turning blinker "+std::string(active_?"ON":"OFF")).c_str();
+        res.success = true;
+
+        ROS_INFO_STREAM("[Raspi_UVDAR_Blinker]: " << res.message);
 
         return true;
       }

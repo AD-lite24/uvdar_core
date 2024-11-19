@@ -83,6 +83,7 @@ int compute_lib_init(compute_lib_instance_t* inst)
       fprintf(stdout, "[ComputeLib]: Getting platform display - GBM...\n");
       inst->dpy = eglGetPlatformDisplay(EGL_PLATFORM_GBM_MESA, inst->gbm, NULL);
       if (inst->dpy == EGL_NO_DISPLAY){
+        fprintf(stdout, "[ComputeLib]: Getting default display as a fallback - GBM...\n");
       inst->dpy = eglGetDisplay(inst->gbm);
       }
       if (inst->dpy == EGL_NO_DISPLAY){

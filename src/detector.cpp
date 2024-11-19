@@ -1,4 +1,3 @@
-#define camera_delay 0.50
 #define MAX_POINTS_PER_IMAGE 100
 
 #include <ros/ros.h>
@@ -33,7 +32,7 @@ public:
    */
   void onInit() {
 
-    ros::NodeHandle nh_ = nodelet::Nodelet::getMTPrivateNodeHandle();
+    nh_ = nodelet::Nodelet::getMTPrivateNodeHandle();
 
     mrs_lib::ParamLoader param_loader(nh_, "UVDARDetector");
 
@@ -266,6 +265,9 @@ private:
       if (!uvdf_was_initialized_){
         if (!uvdf_->initDelayed(image->image)){
           ROS_WARN_STREAM_THROTTLE(1.0,"[UVDARDetector]: Failed to initialize, dropping message...");
+          nh_.shutdown();
+          ros::Duration(2.0).sleep();
+          ros::shutdown(); // if the graphics renderer fails to load, we have to kill the program (ROS nodelet manager and its nodes) and let them restart by setting respawn="true" in the launcher. I could find no better solution to this spurious issue.
           return;
         }
         uvdf_was_initialized_ = true;
@@ -398,7 +400,9 @@ private:
   std::string _uav_name_;
   bool initialized_ = false;
 
-  std::vector<ros::Subscriber> sub_images_;
+  ros::NodeHandle nh_;
+
+    std::vector<ros::Subscriber> sub_images_;
   unsigned int _camera_count_;
   using image_callback_t = boost::function<void (const sensor_msgs::ImageConstPtr&)>;
   std::vector<image_callback_t> cals_image_;
