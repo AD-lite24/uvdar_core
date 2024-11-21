@@ -135,13 +135,14 @@
 
   <group ns="$(arg uav_name)">
   
-    <!-- <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen" launch-prefix="debug_roslaunch"> -->
-    <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen" respawn="true">
+    <!-- <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen" launch-prefix=" export LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libEGL_mesa.so.0; debug_roslaunch"> -->
+    <node pkg="nodelet" type="nodelet" name="$(arg uav_name)_uvdar_nodelet_manager" args="manager" output="screen" respawn="true" launch-prefix=" env LD_PRELOAD=/usr/lib/aarch64-linux-gnu/libEGL_mesa.so.0">
       <param name="num_worker_threads" value="8" />
     </node>
 
 
-    <node pkg="nodelet" type="nodelet" name="uvdar_camera" args="$(arg nodelet) libcamera_ros_driver/LibcameraRosDriver $(arg nodelet_manager)" output="screen" respawn="true" launch-prefix="bash -c 'sleep 5; $0 $@'">
+    <!-- <node pkg="nodelet" type="nodelet" name="uvdar_camera" args="$(arg nodelet) libcamera_ros_driver/LibcameraRosDriver $(arg nodelet_manager)" output="screen" respawn="true" launch-prefix="bash -c 'sleep 5; $0 $@'"> -->
+    <node pkg="nodelet" type="nodelet" name="uvdar_camera" args="$(arg nodelet) libcamera_ros_driver/LibcameraRosDriver $(arg nodelet_manager)" output="screen" respawn="true" >
 
       <!-- Load the default param files -->
       <rosparam command="load" file="$(find uvdar_core)/config/camera_config/raspi_cam_config.yaml" />
@@ -194,6 +195,7 @@
       <remap from="~imu" to="mavros/imu/data"/>
     </node>
 
+    <!-- <node name="blink_processor" pkg="nodelet" type="nodelet" args="$(arg nodelet) uvdar/UVDARBlinkProcessor $(arg nodelet_manager)" output="screen" respawn="false" launch-prefix="bash -c 'sleep 5; $0 $@'"> --> 
     <node name="blink_processor" pkg="nodelet" type="nodelet" args="$(arg nodelet) uvdar/UVDARBlinkProcessor $(arg nodelet_manager)" output="screen" respawn="true"> 
     <!-- <node name="blink_processor" pkg="nodelet" type="nodelet" args="$(arg nodelet) uvdar/UVDARBlinkProcessor $(arg nodelet_manager)" output="screen" respawn="true" launch-prefix="roslaunch_debug"> --> 
       <param name="uav_name" type = "string" value="$(arg uav_name)"/>
