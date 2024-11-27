@@ -41,6 +41,31 @@ static void compute_lib_gl_callback(GLenum source, GLenum type, GLuint id, GLenu
     }
 }
 
+#define CASE_STR( value ) case value: fprintf(stderr, "[ComputeLib]: libEGL error:\n"); fprintf(stderr,#value); fprintf(stderr,"\n"); break; 
+        void eglGetErrorString( EGLint error )
+        {
+          switch( error )
+          {
+            CASE_STR( EGL_SUCCESS             )
+              CASE_STR( EGL_NOT_INITIALIZED     )
+              CASE_STR( EGL_BAD_ACCESS          )
+              CASE_STR( EGL_BAD_ALLOC           )
+              CASE_STR( EGL_BAD_ATTRIBUTE       )
+              CASE_STR( EGL_BAD_CONTEXT         )
+              CASE_STR( EGL_BAD_CONFIG          )
+              CASE_STR( EGL_BAD_CURRENT_SURFACE )
+              CASE_STR( EGL_BAD_DISPLAY         )
+              CASE_STR( EGL_BAD_SURFACE         )
+              CASE_STR( EGL_BAD_MATCH           )
+              CASE_STR( EGL_BAD_PARAMETER       )
+              CASE_STR( EGL_BAD_NATIVE_PIXMAP   )
+              CASE_STR( EGL_BAD_NATIVE_WINDOW   )
+              CASE_STR( EGL_CONTEXT_LOST        )
+            default: fprintf(stderr, "Unknown");
+          }
+        }
+#undef CASE_STR
+
 int compute_lib_init(compute_lib_instance_t* inst)
 {
     if (inst->initialised == true) {
@@ -83,16 +108,16 @@ int compute_lib_init(compute_lib_instance_t* inst)
       fprintf(stdout, "[ComputeLib]: Getting platform display - GBM...\n");
       inst->dpy = eglGetPlatformDisplay(EGL_PLATFORM_GBM_MESA, inst->gbm, NULL);
       if (inst->dpy == EGL_NO_DISPLAY){
+        fprintf(stderr, "[ComputeLib]: Failed.\n");
+        eglGetErrorString(eglGetError());
+        
         fprintf(stdout, "[ComputeLib]: Getting default display as a fallback - GBM...\n");
-      inst->dpy = eglGetDisplay(inst->gbm);
+        inst->dpy = eglGetDisplay(inst->gbm);
       }
       if (inst->dpy == EGL_NO_DISPLAY){
         fprintf(stderr, "[ComputeLib]: Failed to get a display!\n");
-        compute_lib_deinit(inst);
-        return COMPUTE_LIB_ERROR_EGL_PLATFORM_DISPLAY;
-      }
-      else if (inst->dpy == EGL_BAD_PARAMETER){
-        fprintf(stderr, "[ComputeLib]: Parameter \"platform\" has invalid value!\n");
+        fprintf(stderr, "[ComputeLib]: libEGL error:\n");
+        eglGetErrorString(eglGetError());
         compute_lib_deinit(inst);
         return COMPUTE_LIB_ERROR_EGL_PLATFORM_DISPLAY;
       }

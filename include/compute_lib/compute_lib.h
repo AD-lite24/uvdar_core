@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <dlfcn.h>
+
 #include "gl32_utils.h"
 #include "queue.h"
 
