@@ -8,7 +8,7 @@
 #include <mrs_lib/dkf.h>
 
 #include <mrs_msgs/PoseWithCovarianceArrayStamped.h>
-#include <mrs_msgs/RangeWithCovarianceArrayStamped.h>
+#include <mrs_msgs/RangeWithCovarianceIdentified.h>
 #include <mrs_msgs/ReferenceStamped.h>
 #include <mrs_msgs/String.h>
 #include <mrs_msgs/Vec4.h>
@@ -308,7 +308,7 @@ namespace uvdar {
 
         param_loader.loadParam("uwb_frame", _uwb_frame_);
 
-        sub_range_ = nh.subscribe<mrs_msgs::RangeWithCovarianceArrayStamped>("ranges_in", 1, &UWB_UVDAR_Fuser::ProcessRanges, this);
+        sub_range_ = nh.subscribe<mrs_msgs::RangeWithCovarianceIdentified>("ranges_in", 1, &UWB_UVDAR_Fuser::ProcessRange, this);
 
 
         pub_filter_ = nh.advertise<mrs_msgs::PoseWithCovarianceArrayStamped>("filtered_poses", 1);
@@ -557,16 +557,17 @@ namespace uvdar {
        *
        * @param msg
        */
-      /* ProcessRanges //{ */
-      void ProcessRanges(const mrs_msgs::RangeWithCovarianceArrayStampedConstPtr& msg) {
+      /* ProcessRange //{ */
+      void ProcessRange(const mrs_msgs::RangeWithCovarianceIdentifiedConstPtr& msg) {
         /* ROS_INFO_STREAM("[" << ros::this_node::getName().c_str() << "]: Getting ranges."); */
         std::scoped_lock lock(filter_mutex);
+        ros::Time now_time = ros::Time::now();
 
         e::Vector3d receiver_origin;
         {
           std::scoped_lock lock(transformer_mutex);
 
-          auto fromrec_tmp = transformer_.getTransform(_uwb_frame_,_uav_name_+"/"+_output_frame_, msg->header.stamp);
+          auto fromrec_tmp = transformer_.getTransform(_uwb_frame_,_uav_name_+"/"+_output_frame_, now_time);
           if (!fromrec_tmp){
             ROS_ERROR_STREAM("[UWB_UVDAR_Fuser]: Could not obtain transform from " << _uwb_frame_  << " to " << _uav_name_+"/"+_output_frame_ << "!");
             return;
@@ -581,17 +582,16 @@ namespace uvdar {
             receiver_origin = receiver_origin_tmp.value();
         }
 
-        for (auto r: msg->ranges){
-          int uwb_id = r.id;
+          int uwb_id = msg->id;
           int ID = targetIDFromUWB(uwb_id);
           /* ROS_INFO_STREAM("[" << ros::this_node::getName().c_str() << "]: Getting range: " << r.range << ", ID: " << r.id); */
           if (ID < 0){
-            ROS_WARN_STREAM("[UWB_UVDAR_Fuser]: Observed range [" << r.range.range << "] with ID: " << r.id << " did not match any target!");
-            continue;
+            ROS_WARN_STREAM("[UWB_UVDAR_Fuser]: Observed range [" << msg->range.range << "] with ID: " << msg->id << " did not match any target!");
+            return;
           }
-          double range = r.range.range;
+          double range = msg->range.range;
           /* double variance = r.variance/9; // divided by sqr(3) to convert to 3*sigma range */
-          double variance = r.variance;
+          double variance = msg->variance;
           bool found_filter = false;
           for (auto &f: fd_){
             if (f.id == ID){
@@ -599,18 +599,17 @@ namespace uvdar {
                 e::Vector3d direction = f.filter_state.x.topLeftCorner(3,1).normalized();
                 /* ROS_INFO_STREAM("[" << ros::this_node::getName().c_str() << "]: Fusing distance measurement with distance of " << range << " with assumed direction of [ " << direction.transpose() << "]."); */
                 f.filter_state = filter_->correctPlane(f.filter_state, receiver_origin+(direction*range), direction, sqr(3)*variance);
-                f.latest_measurement_range = msg->header.stamp;
+                f.latest_measurement_range = now_time;
                 f.update_count++;
               }
               found_filter = true;
             }
           }
           if (!found_filter){
-            initiateNew(r, msg->header.stamp);
+            initiateNew(*msg, now_time);
           }
 
 
-        }
         return;
       }
       //}
