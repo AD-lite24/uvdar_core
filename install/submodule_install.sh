@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Define variables
 REPO_URL="https://github.com/TimLakemann/ami.git"
 TARGET_DIR="ami"
 REV="f9b44c56297effa62badf9cab835b06a6528e074" # Change to "master" if required
